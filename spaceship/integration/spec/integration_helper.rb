@@ -1,4 +1,7 @@
-require './integration/example_matcher.rb'
+require 'pry'
+require 'spaceship'
+
+require 'example_matcher'
 
 apple_id = ENV['SPACESHIP_INTEGRATION_TEST_APPLE_ID']
 password = ENV['SPACESHIP_INTEGRATION_TEST_APPLE_PASSWORD']
@@ -8,10 +11,3 @@ unless apple_id && password
 end
 Spaceship::Portal.login(apple_id, password)
 Spaceship::Tunes.login(apple_id, password)
-
-RSpec.configure do |config|
-  # This is currently causing some tests to be run twice when combined with specifying
-  # test patterns on the command line. We should figure out how to reconcile these
-  # two things!
-  config.pattern = './integration/**/*_spec.rb'
-end

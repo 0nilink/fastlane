@@ -25,17 +25,19 @@ describe Spaceship do
       end
 
       it 'certificate creation and revokation work' do
-        # Create a new certificate signing request
-        csr, = certificate.create_certificate_signing_request
+        begin
+          # Create a new certificate signing request
+          csr, = certificate.create_certificate_signing_request
 
-        # Use the signing request to create a new distribution certificate
-        created_cert = certificate.production.create!(csr: csr)
-        created_cert_id = created_cert.id
+          # Use the signing request to create a new distribution certificate
+          created_cert = certificate.production.create!(csr: csr)
+          created_cert_id = created_cert.id
 
-        expect(created_cert_id).to match_apple_ten_char_id
-        expect(created_cert.status).to eq("Issued")
-
-        created_cert.revoke!
+          expect(created_cert_id).to match_apple_ten_char_id
+          expect(created_cert.status).to eq("Issued")
+        ensure
+          created_cert.revoke! if created_cert
+        end
 
         # re-fetch certificates to see if this one we just made has been revoked
         certs = certificate.all
