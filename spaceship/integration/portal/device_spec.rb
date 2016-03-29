@@ -1,6 +1,19 @@
 describe Spaceship do
   describe Spaceship::Portal do
     describe Spaceship::Portal::Device do
+      def expect_ios_device(device, type = nil)
+        expect(device.id).to match_apple_ten_char_id
+        expect(device.name).to_not be_empty
+        expect(device.udid).to match_a_udid
+        expect(device.platform).to eq('ios')
+        expect(device.status).to_not be_nil
+        if type
+          expect(device.device_type).to eq(type)
+        else
+          expect(device.device_type).to_not be_nil
+        end
+      end
+
       let(:device) { Spaceship::Portal.device }
 
       before(:all) do
@@ -13,40 +26,48 @@ describe Spaceship do
 
       it 'fetched devices have reasonable data' do
         device = @devices.first
-
-        expect(device.id).to match_apple_ten_char_id
-        expect(device.name).to_not be_empty
-        expect(device.udid).to match_a_udid
-        expect(device.platform).to eq('ios')
-        expect(device.status).to_not be_nil
-        expect(device.device_type).to_not be_nil
+        expect_ios_device(device)
       end
 
-      # it 'certificate creation and revokation work' do
-      #   # Create a new certificate signing request
-      #   csr, _ = certificate.create_certificate_signing_request
+      it 'fetches devices of type iPod' do
+        devices = Spaceship::Portal.device.all_ipod_touches
+        expect(devices).to_not be_empty
 
-      #   # Use the signing request to create a new distribution certificate
-      #   created_cert = certificate.production.create!(csr: csr)
-      #   created_cert_id = created_cert.id
+        device = devices.first
+        expect_ios_device(device, 'ipod')
+      end
 
-      #   expect(created_cert_id).to match(/^\w{10}$/)
-      #   expect(created_cert.status).to eq("Issued")
+      it 'fetches devices of type iPhone' do
+        devices = Spaceship::Portal.device.all_iphones
+        expect(devices).to_not be_empty
 
-      #   created_cert.revoke!
+        device = devices.first
+        expect_ios_device(device, 'iphone')
+      end
 
-      #   # re-fetch certificates to see if this one we just made has been revoked
-      #   certs = certificate.all
+      it 'fetches devices of type iPad' do
+        devices = Spaceship::Portal.device.all_ipads
+        expect(devices).to_not be_empty
 
-      #   expect(certs.any? { |cert| cert.id == created_cert_id }).to be(false)
-      # end
+        device = devices.first
+        expect_ios_device(device, 'ipad')
+      end
 
-      # it 'downloads and returns an actual Certificate object' do
-      #   x509_cert = @certificates.first.download
+      it 'fetches devices of type Apple TV' do
+        devices = Spaceship::Portal.device.all_apple_tvs
+        expect(devices).to_not be_empty
 
-      #   expect(x509_cert).to be_kind_of(OpenSSL::X509::Certificate)
-      #   expect(x509_cert.issuer.to_s).to match(/Apple Inc\./)
-      # end
+        device = devices.first
+        expect_ios_device(device, 'tvOS')
+      end
+
+      it 'fetches devices of type Apple Watch' do
+        devices = Spaceship::Portal.device.all_watches
+        expect(devices).to_not be_empty
+
+        device = devices.first
+        expect_ios_device(device, 'watch')
+      end
     end
   end
 end
