@@ -13,7 +13,7 @@ RSpec::Matchers.define :match_apple_ten_char_id do |example_path|
   end
 end
 
-RSpec::Matchers.define :match_a_udid do |example_path|
+RSpec::Matchers.define :match_udid do |example_path|
   match do |actual|
     @opts = { color_enabled: RSpec.configuration.color_enabled? }
     @difference = DiffMatcher::Difference.new(/^[a-fA-F0-9]{40}$/, actual, @opts)
@@ -36,6 +36,24 @@ EXAMPLE_MATCHERS = {
   'url' => %r{http[s]?://.*}
 }.freeze
 
+#
+# Fuzzy match a JSON file at `example_path` based on matcher rules used as
+# values. Possible matchers are defined in EXAMPLE_MATCHERS, and are prefixed
+# with a $ when used. Values not beginning with a $ are matched exactly.
+#
+# Here's an example match pattern:
+#
+# {
+#   "title": "A Tale of Two Cities",
+#   "price": "$number",
+#   "author": "/Dickens/",
+#   "SKUs": ["$number", "$number", "$number"],
+#   "description": {
+#     "summary": "Two cities or something",
+#     "best_quote": "/it was the best/"
+#   }
+# }
+#
 RSpec::Matchers.define :match_example do |example_path|
   def expectify(arg)
     case arg

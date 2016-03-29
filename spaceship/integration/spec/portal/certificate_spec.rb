@@ -35,14 +35,18 @@ describe Spaceship do
 
           expect(created_cert_id).to match_apple_ten_char_id
           expect(created_cert.status).to eq("Issued")
+
+          # re-fetch certificates to see if this one we just made is present
+          expect(certificate.all.any? { |cert| cert.id == created_cert_id }).to be(true)
         ensure
-          created_cert.revoke! if created_cert
+          # Do this in an ensure block to ensure that the cert is cleaned up even if an error occurs
+          if created_cert
+            created_cert.revoke!
+
+            # re-fetch certificates to see if this one we just made has been revoked
+            expect(certificate.all.any? { |cert| cert.id == created_cert_id }).to be(false)
+          end
         end
-
-        # re-fetch certificates to see if this one we just made has been revoked
-        certs = certificate.all
-
-        expect(certs.any? { |cert| cert.id == created_cert_id }).to be(false)
       end
 
       it 'downloads and returns an actual Certificate object' do

@@ -1,7 +1,7 @@
 require 'pry'
 require 'spaceship'
 
-require 'example_matcher'
+require 'custom_matchers'
 
 apple_id = ENV['SPACESHIP_INTEGRATION_TEST_APPLE_ID']
 password = ENV['SPACESHIP_INTEGRATION_TEST_APPLE_PASSWORD']

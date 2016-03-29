@@ -4,7 +4,7 @@ describe Spaceship do
       def expect_ios_device(device, type = nil)
         expect(device.id).to match_apple_ten_char_id
         expect(device.name).to_not be_empty
-        expect(device.udid).to match_a_udid
+        expect(device.udid).to match_udid
         expect(device.platform).to eq('ios')
         expect(device.status).to_not be_nil
         if type
